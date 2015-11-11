@@ -1,0 +1,133 @@
+A/APPLICATION.PY
+================
+
+1. CRITICAL:
+------------
+Kindly note that your FB login app is still under development mode:
+
+"App Not Setup: This app is still in development mode, and you don't have access to it. Switch to a registered test user or ask an app admin for permissions."
+
+Please consider to switch your application from development mode to live mode - find the reference here about how to do so.
+
+>>>FIXED:
+---------
+Facebook app is now shows:
+"This app is public and available to all users"
+
+2. CRITICAL:
+------------
+If a user like me who is using the latest version of Flask, they would get the error similar to the following:
+
+TypeError: <oauth2client.client.OAuth2Credentials object at 0x00000000039DBC88>
+is not JSON serializable
+
+>>>FIXED:
+---------
+Added code to conver the JSON to dict, then fetched the 'access_token'
+
+Note: I tried/researched on how to use .from_json() without success.
+I even posted a question on the forum and got nothing back. I finally posted 'my' solution in case it could help someone else
+
+3. CRITICAL:
+============
+Please note that in order to preserve the database's integrity, please consider to delete the items belong to this category. Practically, leaving items unreference will violate the database's schema, please look at the code review section on the database set up for how to implement ON DELETE CASCADE
+
+>>> By (my) design the categories (Category, Author, Publisher) cannot be deleted if there still exist books using them.
+I tried to explain this part in the README.
+If I created a category, an author or a publisher, you can use them to add books.
+And I can those you created.
+So if you cannot delete these categories if they are in use with the books I created, and vice versa.
+For the design I used allows to share these objects to avoid duplicates since one publsiher, or author can write or publish many different books. And you can have many different books in the same category, say 'Portrait'.
+
+So it does not create integrity issues since in the in the Author/Book, for instance, relationship Author are parent and they can be deleted when all the children are.
+Cascading the deletion of Author will atomatically delete all the books by other users, which is not what I intended.
+
+However, I did used the 'ON DELETE CASCADE' on the the book reviews.
+This works perfectly well.
+Previously I impleted the deletion of the reviews by calling a helper function during the deletion of a book.
+You can see this in the Book class like so:
+reviews = relationship('Review', backref = 'book', cascade = 'delete')
+
+4/NTPICK:
+=========
+Readability...
+
+>>> Done
+Thanks
+
+5/ NITPICK:
+-----------
+To keep your implementation easier for maintenance, please consider to separate the DB helpers from the endpoint/api implementation.
+
+There is a concept called DAO (Data Access Object) may help you why we should do so:
+
+>>>Hmmm, I know a little bit abound DAO working on MS Exchange with VBA/VBScript... But honestly, i don't have a clue when it comes to Python.
+I'll research on that one to help improve my coding.
+
+B/BOOKDB.PY
+
+1/ NITPICK:
+In order to keep the database's integrity, please consider to implement the ON DELETE CASCADE, which means when the category being referenced deleted, you need to delete the all the items belongs to it
+
+>>> Done
+thanks
+
+C/ EDITBOOK.HTML:
+=================
+
+1/NITPICK:
+----------
+Please consider to use value attribute here instead of placeholder to give a better user experience
+
+>>> FIxed
+Thanks
+
+D/ README.TXT:
+==============
+
+1/NITPICK:
+----------
+Configuration Instruction: Please consider to include the python libraries and their versions in order to make sure that your user's environment meets the requirement before running the application, this is extremely important for the flask version when you can prevent OAuth2Credential is not JSON serializable problem by forcing user to use correct flask version.
+
+>>> I have included list of the libraries and their version in a file called requirements.txt from this command:
+
+>>>pip freeze >> requirements.txt
+
+E/NEW
+======
+
+(From your suggestions):
+1/ @login_required decorator
+----------------------------
+I went ahead and implemented the @login_required decorator where needed
+
+2/ WTF Forms validation:
+------------------------
+All forms with POST method are now implemented with WTF
+A separate forms.py was created to handle the implementation
+
+However, I ran into tremendous issues with the Newbook and Editbook forms so i kept the initial implementation.
+I was getting an error on submit: ValueError: too many values to unpack
+
+3/Image Addition:
+-----------------
+I implemented 2 techniques to add images:
+
+1/ For the authors the images will be retrieved from an URL (just like the first project 'Movie Trailer')
+
+A default image is provided if none is supplyed
+
+2/ For the books cover image the pictures are uploaded to the server file system.
+I had a hard time figuring out the proper path to use to get the file displayed in the form... But it's woking
+
+3/ To create a new book I provide a way get the book data from Google Book API thru the book ISBN. This make it easy for the user in filling out the form.
+If not ISBN provided or the ISBN look up returns nothing a the user will have to fill out all the fields.
+
+3/ Image folders setup as follow:
+
+UPLOAD_FOLDER = '/vagrant/catalog/static/img/' >> used in the code to uplaod the book images
+UPLOADED_FOLDER = '/static/img/' >> used to display images in views
+IMG_COVER_SRC = '/static/img/bookcover/' >> folder for book cover images I saved
+IMG_AUTHOR_SRC = '/static/img/author/' >> folder for author images I saved
+DEFAULT_COVER_IMG = 'faces.jpg' >> default book cover image
+DEFAULT_AUTHOR_IMG = 'faces.jpg' >> default author image

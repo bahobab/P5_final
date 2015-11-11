@@ -1,0 +1,18 @@
+import psycopg2
+
+def createDB():
+    con = psycopg2.connect(database='testdb', user='catalog')
+    return con
+
+
+def application(environ, start_response):
+    status = '200 OK'
+    output = 'Hello World!'
+
+    response_headers = [('Content-type', 'text/plain'), ('Content-Length', str($    start_response(status, response_headers)
+
+    sql = 'SELECT * FROM book'
+    con = createDB()
+    cur = con.cursor()
+    cur.execute(sql)
+    return output

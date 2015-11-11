@@ -1,0 +1,18 @@
+from flask import Flask
+import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from bookdb import Base, Category, Book, Publisher, Author, User, Review
+
+
+engine = create_engine('postgresql://catalog:catalogue@localhost/catalog')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind = engine)
+session = DBSession()
+
+app = Flask(__name__)
+@app.route("/")
+def hello():
+    return "Hey, This is Super!"
+if __name__ == "__main__":
+    app.run()

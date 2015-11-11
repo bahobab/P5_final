@@ -1,0 +1,34 @@
+{%extends "base.html"%}
+{% block title %}Pull Book Info From Google API{% endblock %}
+{%block operation%}
+    <h4>Enter Book ISBN To Pull Book Info From Google API<br>
+    Or You Will Provide Book Info Yourself</h4>
+    <h4><span class="bg-danger"></span></h4>
+    {%if class_name == 'Category' %}
+                <a class="btn btn-primary" href="{{url_for('booksByCategory', category_id = class_id)}}">Cancel</a>
+            {%elif class_name == 'Author' %}
+                <a class="btn btn-primary" href="{{url_for('booksByAuthor', author_id = class_id)}}">Cancel</a>
+            {%elif class_name == 'Publisher'%}
+                <a class="btn btn-primary" href="{{url_for('booksByPublisher', publisher_id = class_id)}}">Cancel</a>
+            {%elif class_name == 'All'%}
+                <a class="btn btn-primary bt-sm" href="{{url_for('allBooks')}}">Cancel</a>
+            {%endif%}
+{%endblock%}
+{%block content%}
+<form action="{{url_for('newBook', class_name = class_name, class_id = class_id)}}" method="POST">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <div class="form-group">
+        <label for = "isbn" class="col-sm-2 control-label">Book ISBN</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="isbn" type="text" size="30" name="isbn-google-api" value="None">
+        </div>
+        <input type="hidden" name="hidden" value="hidden">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input class="btn btn-success" type="submit" value="Create New Book">
+        </div>
+    </div>
+
+</form>
+{%endblock%}
