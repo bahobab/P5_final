@@ -561,11 +561,14 @@ def newBook(class_name, class_id):
             authorNames = []
             publisherNames = []
             for category in categories:
-                categoryNames.append(str(category.name))
+                #categoryNames.append(str(category.name))
+		categoryNames.append((category.name).encode('utf-8'))
             for author in authors:
-                authorNames.append(str(author.name))
+                #authorNames.append(str(author.name))
+		authorNames.append((author.name).encode('utf-8'))
             for publisher in publishers:
-                publisherNames.append(str(publisher.name))
+                #publisherNames.append(str(publisher.name))
+		publisherNames.append((publisher.name).encode('utf-8'))
 
         # Get an obbject by the class id
             if class_name == 'Author':
